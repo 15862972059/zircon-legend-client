@@ -3942,6 +3942,7 @@ namespace Client.Envir
 
         public void Process(S.CheckClientDb p)
         {
+            CEnvir.SaveError("[DB校验] 收到服务端回包 IsUpgrading=" + p.IsUpgrading + " TotalCount=" + p.TotalCount + " Datas=" + (p.Datas == null ? -1 : p.Datas.Length));
             if (!CEnvir.DbVersionChecking) return;
 
             if (p.IsUpgrading)
@@ -3958,6 +3959,7 @@ namespace Client.Envir
                     DbUpgrade.Clear();
                     
                     File.WriteAllBytes(@"./Data/System.db", bytes);
+                    CEnvir.SaveError("[DB校验] 已写入新 System.db, 字节数=" + bytes.Length);
                     CEnvir.DbVersionChecking = false;
                     CEnvir.DbVersionChecked = true;
                 }
