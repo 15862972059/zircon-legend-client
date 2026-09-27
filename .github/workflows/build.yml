@@ -16,13 +16,13 @@ jobs:
       - name: NuGet restore
         shell: cmd
         run: nuget restore "Zircon Client.sln" -PackagesDirectory packages
-      - name: Build
+      - name: Build x86
         shell: cmd
-        run: msbuild "Zircon Client.sln" /p:Configuration=Release /m /nologo /v:m
+        run: msbuild "Zircon Client.sln" /p:Configuration=Release /p:Platform=x86 /m /nologo /v:m
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ZirconClient
+          name: ZirconClient-x86
           path: |
             Client/Release/Client/**
             !Client/Release/Client/app.publish/**
