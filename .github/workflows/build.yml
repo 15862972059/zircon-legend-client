@@ -27,5 +27,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          Compress-Archive -Path Client/Release/Client/* -DestinationPath ZirconClient-x86.zip
+          $exe = Get-ChildItem -Recurse -Filter Legend.exe | Where-Object { $_.FullName -notmatch '\\obj\\' } | Select-Object -First 1
+          Write-Host "Found exe: $($exe.FullName)"
+          $dir = Split-Path $exe.FullName
+          Get-ChildItem $dir | Select-Object Name, Length
+          Compress-Archive -Path "$dir/*" -DestinationPath ZirconClient-x86.zip
           gh release create "x86-$($env:GITHUB_RUN_ID)" ZirconClient-x86.zip --title "x86 build" --notes "auto build x86"
