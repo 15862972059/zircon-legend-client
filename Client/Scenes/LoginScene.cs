@@ -278,6 +278,7 @@ namespace Client.Scenes
             if (CheckDbBox != null) return false;
 
             CEnvir.DbVersionChecking = true;
+            CEnvir.SaveError("[阶段] 发送数据更新校验，哈希已发出");
             CheckDbBox = new DXMessageBox("正在检查数据更新...\n" +
                                  "请等待...", "数据更新中", DXMessageBoxButtons.None);
 
@@ -302,6 +303,7 @@ namespace Client.Scenes
             {
                 if (ConnectionBox != null) return false;
 
+                CEnvir.SaveError("[阶段] 进入本地数据加载 LoadDb");
                 ConnectionBox = new DXMessageBox("正在加载客户端数据...\n" +
                                                  "请等待...", "加载中", DXMessageBoxButtons.Cancel);
 
