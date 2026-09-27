@@ -429,8 +429,9 @@ namespace Client.Envir
 
             LoadingDb = true;
 
-            Task.Run(() =>
+            var dbThread = new System.Threading.Thread(() =>
             {
+                System.Threading.ThreadPool.SetMinThreads(64, 64);
                 try
                 {
                     SaveError("[DB] 1/6 创建 Session 开始");
@@ -473,6 +474,8 @@ namespace Client.Envir
                     LoadingDb = false;
                 }
             });
+            dbThread.IsBackground = true;
+            dbThread.Start();
         }
 
         public static IEnumerable<KeyBindAction> GetKeyAction(Keys key)
