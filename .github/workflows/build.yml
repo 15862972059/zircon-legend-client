@@ -3,6 +3,9 @@ name: Build Client
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: windows-latest
@@ -19,10 +22,10 @@ jobs:
       - name: Build x86
         shell: cmd
         run: msbuild "Zircon Client.sln" /p:Configuration=Release /p:Platform=x86 /m /nologo /v:m
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ZirconClient-x86
-          path: |
-            Client/Release/Client/**
-            !Client/Release/Client/app.publish/**
+      - name: Package and release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          Compress-Archive -Path Client/Release/Client/* -DestinationPath ZirconClient-x86.zip
+          gh release create "x86-$($env:GITHUB_RUN_ID)" ZirconClient-x86.zip --title "x86 build" --notes "auto build x86"
