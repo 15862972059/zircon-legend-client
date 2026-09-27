@@ -929,7 +929,7 @@ namespace Client.Envir
         {
             try
             {
-                if (++ErrorCount > 200 || String.Compare(ex, LastError, StringComparison.OrdinalIgnoreCase) == 0) return;
+                if (++ErrorCount > 200000 || String.Compare(ex, LastError, StringComparison.OrdinalIgnoreCase) == 0) return;
 
                 const string LogPath = @".\Errors\";
 
