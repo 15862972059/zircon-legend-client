@@ -1,0 +1,35 @@
+name: Build Client
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/build.yml"
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - name: Redirect gitee submodule to github mirror
+        run: git config --global url."https://github.com/raphaelcheung/zircon-legend-library".insteadOf "https://gitee.com/raphaelcheung/zircon-legend-library"
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - uses: microsoft/setup-msbuild@v2
+      - name: NuGet restore
+        shell: cmd
+        run: nuget restore "Zircon Client.sln" -PackagesDirectory packages
+      - name: Build
+        shell: cmd
+        run: msbuild "Zircon Client.sln" /p:Configuration=Release /m /nologo /v:m
+      - name: Locate output
+        shell: pwsh
+        run: Get-ChildItem -Recurse -Filter "Legend*.exe" | Select-Object FullName
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ZirconClient
+          path: |
+            Client/bin/**/*.exe
+            Client/bin/**/*.dll
+            Client/bin/**/*.config
