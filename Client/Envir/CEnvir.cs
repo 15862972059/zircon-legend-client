@@ -431,32 +431,47 @@ namespace Client.Envir
 
             Task.Run(() =>
             {
-                Session = new Session(SessionMode.Users, @".\Data\");
+                try
+                {
+                    SaveError("[DB] 1/6 创建 Session 开始");
+                    Session = new Session(SessionMode.Users, @".\Data\");
+                    SaveError("[DB] 2/6 Session 创建完成");
 
-                Globals.ItemInfoList = Session.GetCollection<ItemInfo>();
-                Globals.MagicInfoList = Session.GetCollection<MagicInfo>();
-                Globals.MapInfoList = Session.GetCollection<MapInfo>();
-                Globals.NPCPageList = Session.GetCollection<NPCPage>();
-                Globals.MonsterInfoList = Session.GetCollection<MonsterInfo>();
-                Globals.StoreInfoList = Session.GetCollection<StoreInfo>();
-                Globals.NPCInfoList = Session.GetCollection<NPCInfo>();
-                Globals.MovementInfoList = Session.GetCollection<MovementInfo>();
-                Globals.QuestInfoList = Session.GetCollection<QuestInfo>();
-                Globals.QuestTaskList = Session.GetCollection<QuestTask>();
-                Globals.CompanionInfoList = Session.GetCollection<CompanionInfo>();
-                Globals.CompanionLevelInfoList = Session.GetCollection<CompanionLevelInfo>();
-                
-                KeyBinds = Session.GetCollection<KeyBindInfo>();
-                WindowSettings = Session.GetCollection<WindowSetting>();
-                CastleInfoList = Session.GetCollection<CastleInfo>();
+                    Globals.ItemInfoList = Session.GetCollection<ItemInfo>();
+                    Globals.MagicInfoList = Session.GetCollection<MagicInfo>();
+                    Globals.MapInfoList = Session.GetCollection<MapInfo>();
+                    Globals.NPCPageList = Session.GetCollection<NPCPage>();
+                    Globals.MonsterInfoList = Session.GetCollection<MonsterInfo>();
+                    Globals.StoreInfoList = Session.GetCollection<StoreInfo>();
+                    Globals.NPCInfoList = Session.GetCollection<NPCInfo>();
+                    Globals.MovementInfoList = Session.GetCollection<MovementInfo>();
+                    Globals.QuestInfoList = Session.GetCollection<QuestInfo>();
+                    Globals.QuestTaskList = Session.GetCollection<QuestTask>();
+                    Globals.CompanionInfoList = Session.GetCollection<CompanionInfo>();
+                    Globals.CompanionLevelInfoList = Session.GetCollection<CompanionLevelInfo>();
+                    SaveError("[DB] 3/6 主数据集合完成 ItemInfo=" + Globals.ItemInfoList.Binding.Count + " MapInfo=" + Globals.MapInfoList.Binding.Count);
 
-                Globals.GoldInfo = Globals.ItemInfoList.Binding.FirstOrDefault(x => x.Effect == ItemEffect.Gold);
+                    KeyBinds = Session.GetCollection<KeyBindInfo>();
+                    WindowSettings = Session.GetCollection<WindowSetting>();
+                    CastleInfoList = Session.GetCollection<CastleInfo>();
+                    SaveError("[DB] 4/6 按键/窗口/城堡完成 KeyBinds=" + KeyBinds.Binding.Count);
 
-                CheckKeyBinds();
+                    Globals.GoldInfo = Globals.ItemInfoList.Binding.FirstOrDefault(x => x.Effect == ItemEffect.Gold);
+                    SaveError("[DB] 5/6 GoldInfo=" + (Globals.GoldInfo == null ? "null" : Globals.GoldInfo.ItemName));
 
-                Loaded = true;
-                LoadingDb = false;
-                Session.BackUpSpace = TimeSpan.MaxValue;
+                    CheckKeyBinds();
+                    SaveError("[DB] 6/6 CheckKeyBinds 完成");
+
+                    Loaded = true;
+                    LoadingDb = false;
+                    Session.BackUpSpace = TimeSpan.MaxValue;
+                    SaveError("[DB] 全部加载完成 OK");
+                }
+                catch (Exception ex)
+                {
+                    SaveError("[DB] 加载异常: " + ex.ToString());
+                    LoadingDb = false;
+                }
             });
         }
 
